@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+
 import type { Technology } from './types'
 import Header from './components/Header'
 import Hero from './components/Hero'
@@ -16,8 +17,12 @@ function App() {
   useEffect(() => {
     const loadTechnologies = async () => {
       try {
-        const response = await fetch('/data/technologies.json')
+        const response = await fetch(
+          `${import.meta.env.BASE_URL}data/technologies.json`
+        )
+
         const data: Technology[] = await response.json()
+
         setTechnologies(data)
       } catch (error) {
         console.error('Failed to load technologies:', error)
@@ -29,7 +34,10 @@ function App() {
     loadTechnologies()
   }, [])
 
-  const selectedIds = useMemo(() => new Set(selected.map((item) => item.id)), [selected])
+  const selectedIds = useMemo(
+    () => new Set(selected.map((item) => item.id)),
+    [selected]
+  )
 
   const addToStack = (technology: Technology) => {
     if (selectedIds.has(technology.id)) {
@@ -43,12 +51,19 @@ function App() {
 
   const removeFromStack = (id: string) => {
     const item = selected.find((technology) => technology.id === id)
-    setSelected((current) => current.filter((technology) => technology.id !== id))
-    if (item) toast.info(`${item.name} removed from your stack.`)
+
+    setSelected((current) =>
+      current.filter((technology) => technology.id !== id)
+    )
+
+    if (item) {
+      toast.info(`${item.name} removed from your stack.`)
+    }
   }
 
   const removeAll = () => {
     if (selected.length === 0) return
+
     setSelected([])
     toast.info('All technologies removed from your stack.')
   }
@@ -56,14 +71,21 @@ function App() {
   return (
     <div className="app-shell">
       <Header />
+
       <main>
         <Hero />
 
         <section className="technology-section" id="technologies">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">Explore the <span>Technologies</span></p>
-              <p className="section-subtitle">Pick the tools and technologies you need to build your next project.</p>
+              <p className="eyebrow">
+                Explore the <span>Technologies</span>
+              </p>
+
+              <p className="section-subtitle">
+                Pick the tools and technologies you need to build your next
+                project.
+              </p>
             </div>
           </div>
 
@@ -98,15 +120,31 @@ function App() {
           <div className="projects-box">
             <div>
               <p className="eyebrow">Build with confidence</p>
-              <h2>Turn your technology choices into a <span>real stack.</span></h2>
-              <p>Choose the tools that match your project and keep your development stack simple, focused, and ready to build.</p>
+
+              <h2>
+                Turn your technology choices into a <span>real stack.</span>
+              </h2>
+
+              <p>
+                Choose the tools that match your project and keep your
+                development stack simple, focused, and ready to build.
+              </p>
             </div>
-            <a className="primary-button" href="#technologies">Explore Technologies</a>
+
+            <a className="primary-button" href="#technologies">
+              Explore Technologies
+            </a>
           </div>
         </section>
       </main>
+
       <Footer />
-      <ToastContainer position="bottom-right" autoClose={2200} hideProgressBar />
+
+      <ToastContainer
+        position="bottom-right"
+        autoClose={2200}
+        hideProgressBar
+      />
     </div>
   )
 }
